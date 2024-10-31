@@ -85,7 +85,7 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(float damage)
     {
         hp -= damage;
-        print($"{damage} 아야!");
+        //print($"{damage} 아야!");
     }
 
     public void Die()
