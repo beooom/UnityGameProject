@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class VoidSkill : MonoBehaviour
 {
     public GameObject voidPrefab; //보이드 프리팹
-    public float meteorCooldown = 5f; //보이드 쿨타임
+    public float voidCooldown = 5f; //보이드 쿨타임
 
     public Image cooldownImage; // 쿨타임을 표시할 이미지
     public Text cooldownText; // 쿨타임을 표시할 텍스트
@@ -38,7 +38,7 @@ public class VoidSkill : MonoBehaviour
 
         Vector3 spawnPosition = GameManager.Instance.player.transform.position;
         GameObject Void = Instantiate(voidPrefab, spawnPosition, Quaternion.identity);
-        yield return new WaitForSeconds(meteorCooldown); // 쿨타임 대기
+        yield return new WaitForSeconds(voidCooldown); // 쿨타임 대기
     }
 
     private IEnumerator CooldownRoutine()
@@ -46,10 +46,10 @@ public class VoidSkill : MonoBehaviour
         float elapsed = 0f;
         cooldownImage.fillAmount = 1f; // 이미지가 완전히 채워진 상태로 시작
 
-        while (elapsed < meteorCooldown)
+        while (elapsed < voidCooldown)
         {
             elapsed += Time.deltaTime;
-            cooldownImage.fillAmount = 1 - (elapsed / meteorCooldown); // 시간이 지남에 따라 이미지가 비워짐
+            cooldownImage.fillAmount = 1 - (elapsed / voidCooldown); // 시간이 지남에 따라 이미지가 비워짐
             yield return null;
         }
 

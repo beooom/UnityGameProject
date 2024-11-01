@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class StarLightProjectile : MonoBehaviour
 {
@@ -12,49 +14,43 @@ public class StarLightProjectile : MonoBehaviour
     public float fireInterval = 0.5f; // 투사체 발사 간격
     public float projectileSpeed = 5f; // 투사체 속도
 
-    private Transform playerTransform;
     private List<GameObject> starlightProjectiles = new List<GameObject>(); // 생성된 스타라이트 투사체 리스트
     private bool isCooldown = false; // 쿨타임 상태 확인용
 
+    public Image cooldownImage; // 쿨타임을 표시할 이미지
+    public Text cooldownText; // 쿨타임을 표시할 텍스트
 
-    private IEnumerator Start()
+    private void Awake()
     {
-        yield return null;
-        playerTransform = GameManager.Instance.player.transform;
+        cooldownImage.fillAmount = 0f; // 초기화 - 쿨타임이 없을 때 이미지 비워둠
+    }
+    private void Start()
+    {
         StartCoroutine(StarlightSkillRoutine());
     }
-
     private IEnumerator StarlightSkillRoutine()
     {
-        float startTime = Time.time;
         while (true)
         {
             Enemy enemy = FindClosestEnemy();
-            if (enemy != null)
+            if (enemy != null && !isCooldown)
             {
-                float endTime = startTime + starlightCooldown;
+                // 쿨타임 시작
+                isCooldown = true;
+                StartCoroutine(CooldownRoutine()); // 쿨타임 표시 코루틴 시작
 
-                if (!isCooldown && endTime < Time.time) // 쿨타임이 끝나고 모든 투사체가 소진되었을 때
+                for (int i = 0; i < maxStarlights; i++)
                 {
-                    isCooldown = true;
-
-                    // 새로운 Starlight 생성
-                    for (int i = 0; i < maxStarlights; i++)
-                    {
-                        Vector2 randCircle = Random.insideUnitCircle * 0.5f;
-                        Vector2 spawnPosition =
-                            new Vector2(playerTransform.position.x, playerTransform.position.y + spawnHeight) + randCircle;
-                        GameObject starlight = Instantiate(starlightPrefab, spawnPosition, Quaternion.identity);
-                        starlightProjectiles.Add(starlight);
-                    }
-                    startTime = Time.time;
+                    Vector2 randCircle = Random.insideUnitCircle * spawnRange;
+                    Vector2 spawnPosition =
+                        new Vector2(GameManager.Instance.player.transform.position.x,
+                        GameManager.Instance.player.transform.position.y + spawnHeight) + randCircle;
+                    GameObject starlight = Instantiate(starlightPrefab, spawnPosition, Quaternion.identity);
+                    starlightProjectiles.Add(starlight);
                 }
 
                 // 투사체가 있을 때마다 발사
-                if (starlightProjectiles.Count > 0)
-                {
-                    yield return StartCoroutine(FireStarlight());
-                }
+                yield return StartCoroutine(FireStarlight());
             }
 
             yield return null;
@@ -81,9 +77,6 @@ public class StarLightProjectile : MonoBehaviour
                 yield return null; // 적이 없으면 대기
             }
         }
-
-        // 모든 투사체 발사 완료 후 쿨타임 초기화
-        isCooldown = false;
     }
 
     private IEnumerator MoveProjectile(GameObject starlight, Vector2 targetPosition)
@@ -99,6 +92,21 @@ public class StarLightProjectile : MonoBehaviour
             Destroy(starlight); // 목표 지점 도달 시 파괴
         }
     }
+    private IEnumerator CooldownRoutine()
+    {
+        float elapsed = 0f;
+        cooldownImage.fillAmount = 1f; // 이미지가 완전히 채워진 상태로 시작
+
+        while (elapsed < starlightCooldown)
+        {
+            elapsed += Time.deltaTime;
+            cooldownImage.fillAmount = 1 - (elapsed / starlightCooldown); // 시간이 지남에 따라 이미지가 비워짐
+            yield return null;
+        }
+
+        cooldownImage.fillAmount = 0f; // 쿨타임이 완료되면 이미지 초기화
+        isCooldown = false;
+    }
 
     private Enemy FindClosestEnemy()
     {
@@ -107,7 +115,7 @@ public class StarLightProjectile : MonoBehaviour
 
         foreach (Enemy enemy in GameManager.Instance.enemies)
         {
-            float distance = Vector3.Distance(playerTransform.position, enemy.transform.position);
+            float distance = Vector3.Distance(GameManager.Instance.player.transform.position, enemy.transform.position);
             if (distance < closestDistance)
             {
                 closestDistance = distance;

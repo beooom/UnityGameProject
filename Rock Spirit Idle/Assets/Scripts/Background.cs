@@ -4,20 +4,28 @@ using UnityEngine;
 
 public class Background : MonoBehaviour
 {
+    private MeshRenderer render;
+    private float offset;
     [Tooltip("background 이동속도")]
-    public float flowSpeed = 0.6f;
+    public float flowSpeed = 0.06f;
 
-    public  Player player;
+    public Player player;
 
+    private void Start()
+    {
+        render = GetComponent<MeshRenderer>();
+    }
     void Update()
     {
-        transform.Translate(Vector3.left * Time.deltaTime * flowSpeed);
-        if (transform.position.x < -4.5f)
-            transform.position = Vector3.right * 4.5f;
+        offset += Time.deltaTime * flowSpeed;
+        render.material.mainTextureOffset = new Vector2(offset, 0);
+        //transform.Translate(Vector3.left * Time.deltaTime * flowSpeed);
+        //if (transform.position.x < -4.5f)
+        //    transform.position = Vector3.right * 4.5f;
         if (player.anim.GetBool("isMoving") == false)
             flowSpeed = 0f;
         else 
-            flowSpeed = 0.6f;
+            flowSpeed = 0.06f;
 
     }
 }

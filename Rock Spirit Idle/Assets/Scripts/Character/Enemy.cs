@@ -78,14 +78,14 @@ public class Enemy : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             StopCoroutine(MoveCo);
-            TakeDamage(1f);
         }
     }
 
     public void TakeDamage(float damage)
     {
         hp -= damage;
-        //print($"{damage} 아야!");
+        print($"{damage} 아야!");
+        //print($"내 공격력임. {GameManager.Instance.player.power}");
     }
 
     public void Die()

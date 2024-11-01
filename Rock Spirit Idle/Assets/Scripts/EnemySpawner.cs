@@ -47,7 +47,6 @@ public class EnemySpawner : MonoBehaviour
             mon = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
             mon.GetComponent<Enemy>().hp = 1 + (monsterLevel * 0.1f);
             mon.GetComponent<Enemy>().power = 1 + (monsterLevel * 1f);
-            print($"{mon.GetComponent<Enemy>().hp}");
         }
         monsterLevel++;
     }

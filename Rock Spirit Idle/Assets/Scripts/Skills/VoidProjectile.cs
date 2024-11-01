@@ -8,9 +8,9 @@ public class VoidProjectile : MonoBehaviour
 {
     public float damageMultiplier = 1.2f; //플레이어 공격력의 120%
     public float voidSpeed = 1f; //보이드 속도
-    public int pierceCount = 2; //관통 횟수
+    public int pierceCount = 10; //관통 횟수
 
-    public float damageInterval = 0.3f; //데미지 간격
+    public float damageInterval = 0.15f; //데미지 간격
     private float preDamageTime; //이전에 데미지를 준 시간(Time.time)
 
     private Camera mainCamera;
@@ -47,6 +47,7 @@ public class VoidProjectile : MonoBehaviour
         {
             collision.GetComponent<Enemy>().TakeDamage(GameManager.Instance.player.power * damageMultiplier);
             pierceCount--;
+            print(pierceCount);
             preDamageTime = Time.time;
         }
     }

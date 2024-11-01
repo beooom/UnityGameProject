@@ -83,8 +83,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageMultiplier: 1.2
   voidSpeed: 1
-  pierceCount: 2
-  damageInterval: 0.3
+  pierceCount: 10
+  damageInterval: 0.15
 --- !u!1 &8326638999457913066
 GameObject:
   m_ObjectHideFlags: 0
