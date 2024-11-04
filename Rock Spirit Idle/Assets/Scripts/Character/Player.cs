@@ -22,8 +22,8 @@ public class Player : MonoBehaviour
 
     public Animator anim;
     public bool isMoving;
-    Enemy targetEnemey;
 
+    private Enemy targetEnemey;
 
     private void Awake()
     {
@@ -38,7 +38,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        FindCloseEnemy();
+        targetEnemey = FindClosestEnemy();
         if (targetEnemey != null)
         {
             anim.SetBool("isMoving", false);
@@ -53,7 +53,7 @@ public class Player : MonoBehaviour
     {
         while (true)
         {
-            if (targetEnemey != null)
+            if (targetEnemey != null && GameManager.Instance.range.canUseSkill)
             {
                 yield return new WaitForSeconds(attackSpeed);
                 GameObject pre = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
@@ -62,20 +62,23 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void FindCloseEnemy()
+    private Enemy FindClosestEnemy()
     {
-        targetEnemey = null; //대상으로 지정된 적
-        float targetDistance = float.MaxValue; //대상과의 거리
+        Enemy closestEnemy = null;
+        float closestDistance = float.MaxValue;
 
         foreach (Enemy enemy in GameManager.Instance.enemies)
         {
-            float distance = Vector3.Distance(enemy.transform.position, transform.position);
-            if (distance < targetDistance) //이전에 비교한 적보다 가까우면
+            float distance =
+                Vector3.Distance(transform.position, enemy.transform.position);
+            if (distance < closestDistance)
             {
-                targetDistance = distance;
-                targetEnemey = enemy;
+                closestDistance = distance;
+                closestEnemy = enemy;
             }
         }
+
+        return closestEnemy;
     }
 
     public void TakeDamage(float damage)

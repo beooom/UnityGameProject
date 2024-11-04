@@ -24,7 +24,7 @@ public class VoidSkill : MonoBehaviour
         if (!isCooldown)
         {
             Enemy target = FindClosestEnemy();
-            if (target != null)
+            if (target != null && GameManager.Instance.range.canUseSkill)
             {
                 StartCoroutine(VoidSkillCo(target));
             }

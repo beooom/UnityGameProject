@@ -1,9 +1,12 @@
 fileFormatVersion: 2
-guid: 4b9cd24c6f2fe9844bf97bb115d4c6b8
+guid: e78cdc0870cbf3c41b0d7e4452ac4169
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - starlightPrefab: {fileID: 2029365723811646635, guid: d8d23cef8caae14419b1f05289f99673, type: 3}
+  - cooldownImage: {instanceID: 0}
+  - cooldownText: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -28,7 +28,7 @@ public class Berserk : MonoBehaviour
         {
             playerPower = GameManager.Instance.player.power;
             Enemy target = FindClosestEnemy();
-            if (target != null)
+            if (target != null && GameManager.Instance.range.canUseSkill)
             {
                 StartCoroutine(BerserkRoutine(target));
             }

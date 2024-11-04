@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1130238842204219210}
   - component: {fileID: 5629357359217046285}
-  - component: {fileID: -2494274788697653767}
+  - component: {fileID: 7629183267165343402}
   m_Layer: 0
   m_Name: StarLight
   m_TagString: Untagged
@@ -69,7 +69,7 @@ CircleCollider2D:
   m_Offset: {x: 0.23, y: 0}
   serializedVersion: 2
   m_Radius: 0.25
---- !u!114 &-2494274788697653767
+--- !u!114 &7629183267165343402
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

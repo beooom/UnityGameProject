@@ -48,6 +48,7 @@ public class Enemy : MonoBehaviour
         {
             if (hp <= 0)
             {
+                DataManager.Instance.totalGold += 10;
                 isDead = true;
                 anim.SetTrigger("Die");
                 coll.enabled = false;
@@ -84,13 +85,12 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(float damage)
     {
         hp -= damage;
-        print($"{damage} 아야!");
+        //print($"{damage} 아야!");
         //print($"내 공격력임. {GameManager.Instance.player.power}");
     }
 
     public void Die()
     {
-        DataManager.Instance.totalGold += 10;
         GameManager.Instance.enemies.Remove(this);
         Destroy(gameObject);
     }

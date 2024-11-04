@@ -12,18 +12,17 @@ public class LightningSkill : MonoBehaviour
     public float damageMultiplier = 5f; // 플레이어 공격력의 500% 데미지
     public float intervalBetweenStrikes = 0.2f; // 각 타격 간격
 
+    public GameObject player;
+
     public Image cooldownImage; // 쿨타임을 표시할 이미지
     public Text cooldownText; // 쿨타임을 표시할 텍스트
 
-    private Transform playerTransform;
     private bool isCooldown = false; // 스킬이 쿨타임 상태인지 확인
 
-    private IEnumerator Start()
+    private void Start()
     {
-        yield return null;
-        playerTransform = GameManager.Instance.player.transform;
-        cooldownImage.fillAmount = 0f; // 초기화 - 쿨타임이 없을 때 이미지 비워둠
-        //StartCoroutine(LightningSkillRoutine());
+        // 쿨타임 이미지 초기화
+        cooldownImage.fillAmount = 0f;
     }
 
     private void Update()
@@ -32,7 +31,7 @@ public class LightningSkill : MonoBehaviour
         {
             // 가까운 적 탐색 후 타겟이 있을 경우 스킬 실행
             List<Enemy> targets = FindClosestEnemies();
-            if (targets.Count > 0)
+            if (targets.Count > 0 && GameManager.Instance.range.canUseSkill)
             {
                 StartCoroutine(LightningSkillRoutine(targets));
             }
@@ -87,8 +86,9 @@ public class LightningSkill : MonoBehaviour
         // 플레이어 위치를 기준으로 적 정렬
         sortedEnemies.Sort((a, b) =>
         {
-            float distanceA = Vector3.Distance(playerTransform.position, a.transform.position);
-            float distanceB = Vector3.Distance(playerTransform.position, b.transform.position);
+            if (a == null || b == null) return 0;
+            float distanceA = Vector3.Distance(player.transform.position, a.transform.position);
+            float distanceB = Vector3.Distance(player.transform.position, b.transform.position);
             return distanceA.CompareTo(distanceB);
         });
 

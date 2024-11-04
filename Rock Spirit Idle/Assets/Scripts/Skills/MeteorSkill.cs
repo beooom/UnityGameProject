@@ -12,14 +12,17 @@ public class MeteorSkill : MonoBehaviour
     public float explosionRadius = 1f; // 폭발 반경
     public float damageMultiplier = 12f; // 플레이어 공격력의 1200%
 
+    public GameObject player;
+
     public Image cooldownImage; // 쿨타임을 표시할 이미지
     public Text cooldownText; // 쿨타임을 표시할 텍스트
 
     private bool isCooldown = false; // 스킬이 쿨타임 상태인지 확인
 
-    private void Awake()
+    private void Start()
     {
-        cooldownImage.fillAmount = 0f; // 초기화 - 쿨타임이 없을 때 이미지 비워둠
+        // 쿨타임 이미지 초기화
+        cooldownImage.fillAmount = 0f;
     }
 
     private void Update()
@@ -27,7 +30,7 @@ public class MeteorSkill : MonoBehaviour
         if (!isCooldown)
         {
             Enemy target = FindClosestEnemy();
-            if (target != null)
+            if (target != null && GameManager.Instance.range.canUseSkill)
             {
                 StartCoroutine(MeteorSkillRoutine(target));
             }
@@ -87,7 +90,7 @@ public class MeteorSkill : MonoBehaviour
 
         foreach (Enemy enemy in GameManager.Instance.enemies)
         {
-            float distance = Vector3.Distance(GameManager.Instance.player.transform.position, enemy.transform.position);
+            float distance = Vector3.Distance(player.transform.position, enemy.transform.position);
             if (distance < closestDistance)
             {
                 closestDistance = distance;

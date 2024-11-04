@@ -47,7 +47,7 @@ public class VoidProjectile : MonoBehaviour
         {
             collision.GetComponent<Enemy>().TakeDamage(GameManager.Instance.player.power * damageMultiplier);
             pierceCount--;
-            print(pierceCount);
+            //print(pierceCount);
             preDamageTime = Time.time;
         }
     }

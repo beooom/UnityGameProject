@@ -9,10 +9,13 @@ using UIButton = UnityEngine.UI.Button;
 public class UIManager : SingletonManager<UIManager>
 {
     public bool m_IsButtonDowning;
-    public UIButton button;
+    public UIButton twiceButton;
+    public List<UIButton> buttons = new List<UIButton>();
+    public Text isPower;
     private void Update()
     {
-        ColorBlock colorBlock = button.colors;
+        ColorBlock colorBlock = twiceButton.colors;
+        isPower.text = $"°ø°Ý·Â : {GameManager.Instance.player.power}";
         if (m_IsButtonDowning)
         {
             colorBlock.selectedColor = Color.green;
@@ -25,7 +28,14 @@ public class UIManager : SingletonManager<UIManager>
             colorBlock.normalColor = Color.white;
             Time.timeScale = 1.0f;
         }
-        button.colors = colorBlock;
+        twiceButton.colors = colorBlock;
+    }
+    public void UpgradeButton(int index)
+    {
+        if (DataManager.Instance.totalGold < (DataManager.Instance.upgradeLevels[index] + 1) * 10)
+            return;
+        DataManager.Instance.totalGold -= (DataManager.Instance.upgradeLevels[index] + 1) * 10;
+        DataManager.Instance.Upgrade(index);
     }
 
     public void PointerDown()
