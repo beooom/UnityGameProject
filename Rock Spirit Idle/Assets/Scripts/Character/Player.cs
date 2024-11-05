@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
+using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
@@ -11,15 +13,21 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     private Collider2D coll;
 
-    public float power = 1f;
-    public float hp = 5f;
+    public float power = 0f;
+    public float hp = 0f;
     public float maxHp;
     public float restoreHp = 0f;
+    public float restoreTime = 5f;
     public float criticalRate = 0f;
     public float criticalHit = 1f;
     public float attackSpeed = 1f;
+    public float attackSpeedIncrease = 0f;
     public float doubleShot = 0;
+    public float berserkMultiplier = 1f; // 버서크 배율 (기본값 1, 버서크 중일 때 2로 설정)
+    public float hpAmount { get { return hp / maxHp; } }
 
+    public Image hpBar;
+    public Text curHp;
     public Animator anim;
     public bool isMoving;
 
@@ -27,6 +35,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        maxHp = hp;
         rb = GetComponent<Rigidbody2D>();
         coll = GetComponent<Collider2D>();
     }
@@ -34,6 +43,7 @@ public class Player : MonoBehaviour
     {
         GameManager.Instance.player = this;
         StartCoroutine(Fire());
+        StartCoroutine(Restore());
     }
 
     private void Update()
@@ -47,6 +57,8 @@ public class Player : MonoBehaviour
         {
             anim.SetBool("isMoving", true);
         }
+        hpBar.fillAmount = hpAmount;
+        curHp.text = $"{hp}";
     }
 
     private IEnumerator Fire()
@@ -55,7 +67,7 @@ public class Player : MonoBehaviour
         {
             if (targetEnemey != null && GameManager.Instance.range.canUseSkill)
             {
-                yield return new WaitForSeconds(attackSpeed);
+                yield return new WaitForSeconds(1 / (attackSpeed + attackSpeedIncrease));
                 GameObject pre = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
             }
             yield return null;
@@ -80,6 +92,32 @@ public class Player : MonoBehaviour
 
         return closestEnemy;
     }
+    public float GetCurrentPower()
+    {
+        return power * berserkMultiplier; // 버서크 상태에 따라 배율 적용
+    }
+
+    public bool CriticalHit()
+    {
+        bool OnCritical = false;
+        if (criticalRate > Random.Range(0, 100))
+        {
+            OnCritical = true;
+        }
+        return OnCritical;
+    }
+    private IEnumerator Restore()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(restoreTime);
+            hp += restoreHp;
+            if (hp > maxHp)
+            {
+                hp = maxHp;
+            }
+        }
+    }
 
     public void TakeDamage(float damage)
     {
@@ -92,6 +130,11 @@ public class Player : MonoBehaviour
 
     public void Die()
     {
+        GameManager.Instance.spawner.monsterLevel = 0;
 
+        for (int i = GameManager.Instance.enemies.Count - 1; i >= 0; i--)
+        {
+            GameManager.Instance.enemies[i].Die();
+        }
     }
 }

@@ -106,7 +106,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   flightSpeed: 1
-  hoverHeight: 4
+  hoverHeight: 2
 --- !u!1 &6882098507598565097
 GameObject:
   m_ObjectHideFlags: 0

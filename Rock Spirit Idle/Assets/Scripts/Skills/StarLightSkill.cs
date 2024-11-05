@@ -9,8 +9,8 @@ public class StarLightSkill : MonoBehaviour
     public GameObject starlightPrefab; // 스타라이트 투사체 프리팹
     public int maxStarlights = 10; // 최대 스타라이트 수
     public float starlightCooldown = 7f; // 쿨타임
-    public float spawnHeight = 2f; // 플레이어 위 3f 위치
-    public float spawnRange = 0.5f; // 1f의 범위 내에서 랜덤 소환
+    public float spawnHeight = 1f; // 플레이어 위 1f 위치
+    public float spawnRange = 0.3f; // 범위 내에서 랜덤 소환
     public float fireInterval = 0.5f; // 투사체 발사 간격
     public float projectileSpeed = 5f; // 투사체 속도
 
@@ -21,6 +21,7 @@ public class StarLightSkill : MonoBehaviour
 
     private List<GameObject> starlightProjectiles = new List<GameObject>(); // 생성된 스타라이트 투사체 리스트
     private bool isCooldown = false; // 쿨타임 상태 확인용
+    private bool isFiring = false; // 발사 중 여부 확인용 플래그
 
 
     private void Start()
@@ -45,21 +46,29 @@ public class StarLightSkill : MonoBehaviour
 
     private void StarlightSkillRoutine(Enemy enemy)
     {
-        for (int i = 0; i < maxStarlights; i++)
+        if (starlightProjectiles.Count == 0)
         {
-            Vector2 randCircle = Random.insideUnitCircle * spawnRange;
-            Vector2 spawnPosition =
-                new Vector2(player.transform.position.x, player.transform.position.y + spawnHeight) + randCircle;
-            GameObject starlight = Instantiate(starlightPrefab, spawnPosition, Quaternion.identity);
-            starlightProjectiles.Add(starlight);
+            for (int i = 0; i < maxStarlights; i++)
+            {
+                Vector2 randCircle = Random.insideUnitCircle * spawnRange;
+                Vector2 spawnPosition =
+                    new Vector2(player.transform.position.x, player.transform.position.y + spawnHeight) + randCircle;
+                GameObject starlight = Instantiate(starlightPrefab, spawnPosition, Quaternion.identity);
+                starlightProjectiles.Add(starlight);
+            }
         }
 
         // 투사체 발사 시작
-        StartCoroutine(FireStarlight());
+        if (!isFiring)
+        {
+            StartCoroutine(FireStarlight());
+        }
     }
 
     private IEnumerator FireStarlight()
     {
+        isFiring = true; // 발사 중 플래그 설정
+
         while (starlightProjectiles.Count > 0)
         {
             Enemy closestEnemy = FindClosestEnemy();
@@ -78,13 +87,14 @@ public class StarLightSkill : MonoBehaviour
                 yield return null; // 적이 없으면 대기
             }
         }
+        isFiring = false;
     }
 
     private IEnumerator MoveProjectile(GameObject starlight, Vector2 targetPosition)
     {
         while (starlight != null && (Vector2)starlight.transform.position != targetPosition)
         {
-            starlight.transform.position = 
+            starlight.transform.position =
                 Vector2.MoveTowards(starlight.transform.position, targetPosition, projectileSpeed * Time.deltaTime);
             yield return null;
         }
@@ -117,7 +127,7 @@ public class StarLightSkill : MonoBehaviour
 
         foreach (Enemy enemy in GameManager.Instance.enemies)
         {
-            float distance = 
+            float distance =
                 Vector3.Distance(player.transform.position, enemy.transform.position);
             if (distance < closestDistance)
             {

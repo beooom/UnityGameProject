@@ -1,8 +1,8 @@
-using Lean.Pool;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class VoidProjectile : MonoBehaviour
 {
@@ -10,7 +10,7 @@ public class VoidProjectile : MonoBehaviour
     public float voidSpeed = 1f; //보이드 속도
     public int pierceCount = 10; //관통 횟수
 
-    public float damageInterval = 0.15f; //데미지 간격
+    public float damageInterval = 0.1f; //데미지 간격
     private float preDamageTime; //이전에 데미지를 준 시간(Time.time)
 
     private Camera mainCamera;
@@ -45,9 +45,12 @@ public class VoidProjectile : MonoBehaviour
         }
         if (collision.CompareTag("Enemy"))
         {
-            collision.GetComponent<Enemy>().TakeDamage(GameManager.Instance.player.power * damageMultiplier);
+            float damage = GameManager.Instance.player.GetCurrentPower() * damageMultiplier;
+            if (GameManager.Instance.player.CriticalHit())
+                collision.GetComponent<Enemy>().TakeDamage(damage * GameManager.Instance.player.criticalHit);
+            else
+                collision.GetComponent<Enemy>().TakeDamage(damage);
             pierceCount--;
-            //print(pierceCount);
             preDamageTime = Time.time;
         }
     }

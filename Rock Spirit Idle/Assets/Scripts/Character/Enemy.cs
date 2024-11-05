@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
@@ -16,20 +16,23 @@ public class Enemy : MonoBehaviour
     public float hp = 1;
     public float maxHp;
     public float power = 1;
+    public float attackSpeed = 1f;
     bool isDead = false;
     private Coroutine MoveCo;
+    public float hpAmount { get { return hp / maxHp; } }
 
+    public Image hpBar;
     public Animator anim;
-
     private void Awake()
     {
+        maxHp = hp;
         rb = GetComponent<Rigidbody2D>();
         coll = GetComponent<Collider2D>();
     }
     private IEnumerator Start()
     {
         GameManager.Instance.enemies.Add(this); //적 리스트에 자기 자신을 Add
-        maxHp = hp;
+        
 
         yield return null;//한프레임 쉬자.
 
@@ -41,6 +44,7 @@ public class Enemy : MonoBehaviour
     private void Update()
     {
         if (isDead) return;
+        hpBar.fillAmount = hpAmount;
     }
     private IEnumerator CheckEnemyDeath()
     {
@@ -79,6 +83,16 @@ public class Enemy : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             StopCoroutine(MoveCo);
+            anim.SetBool("Attack", true);
+            StartCoroutine(Attack());
+        }
+    }
+    private IEnumerator Attack()
+    {
+        while(true)
+        {
+            yield return new WaitForSeconds(attackSpeed);
+            GameManager.Instance.player.TakeDamage(power);
         }
     }
 

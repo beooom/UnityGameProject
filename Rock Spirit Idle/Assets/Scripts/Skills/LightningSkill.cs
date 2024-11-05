@@ -42,18 +42,21 @@ public class LightningSkill : MonoBehaviour
     {
         isCooldown = true;
         StartCoroutine(CooldownRoutine()); // 쿨타임 표시 코루틴 시작
-        foreach (Enemy target in targets)
+        foreach (Enemy enemy in targets)
         {
-            if (target != null)
+            if (enemy != null)
             {
                 // 벼락 이펙트를 타겟 위치에 생성
-                Vector3 strikePosition = target.transform.position;
+                Vector3 strikePosition = enemy.transform.position;
                 GameObject lightningEffect = Instantiate(lightningEffectPrefab, strikePosition, Quaternion.identity);
 
                 // 타겟에 피해 적용
-                float damage = GameManager.Instance.player.power * damageMultiplier;
-                target.TakeDamage(damage);
-
+                float damage = GameManager.Instance.player.GetCurrentPower() * damageMultiplier;
+                enemy.TakeDamage(damage);
+                if (GameManager.Instance.player.CriticalHit())
+                    enemy.TakeDamage(damage * player.GetComponent<Player>().criticalHit);
+                else
+                    enemy.TakeDamage(damage);
                 // 벼락 이펙트 삭제
                 Destroy(lightningEffect, 0.8f);
 

@@ -65,7 +65,10 @@ public class basicProjectile : MonoBehaviour
         if (collision.TryGetComponent<Enemy>(out Enemy enemy))
         {
             isUsed = true; // 첫 충돌 후 플래그 설정
-            enemy.TakeDamage(GameManager.Instance.player.power);
+            if (GameManager.Instance.player.CriticalHit())
+                enemy.TakeDamage(GameManager.Instance.player.GetCurrentPower() * GameManager.Instance.player.criticalHit);
+            else
+                enemy.TakeDamage(GameManager.Instance.player.GetCurrentPower());
             Destroy(gameObject);
         }
     }

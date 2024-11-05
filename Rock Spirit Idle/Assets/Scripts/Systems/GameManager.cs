@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : SingletonManager<GameManager>
 {
     internal List<Enemy> enemies = new List<Enemy>(); //씬에 존재하는 전체 적 List
+    internal EnemySpawner spawner;
     internal Player player; //씬에 존재하는 플레이어 객체
     internal PlayerSkillRange range;
 
