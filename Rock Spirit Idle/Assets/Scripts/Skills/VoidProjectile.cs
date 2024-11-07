@@ -17,7 +17,6 @@ public class VoidProjectile : MonoBehaviour
 
     public Animator anim;
     private Camera mainCamera;
-    private Collider2D coll;
 
     private void Awake()
     {

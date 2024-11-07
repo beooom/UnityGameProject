@@ -31,8 +31,8 @@ public class UIManager : SingletonManager<UIManager>
     {
         base.Awake();
         Time.timeScale = 0f;
-        title.enabled = true;
-        titleStart.onClick.AddListener(() => StartCoroutine(StartGameAfterDelay(1f)));  // 시작 버튼 클릭 시 게임 시작
+        title.gameObject.SetActive(true);
+        titleStart.onClick.AddListener(() => StartCoroutine(StartGameAfterDelay(0.5f)));  // 시작 버튼 클릭 시 게임 시작
         titleQuit.onClick.AddListener(Application.Quit);  // 종료 버튼 클릭 시 게임 종료
         ExitPanel.SetActive(false);
     }
@@ -65,6 +65,10 @@ public class UIManager : SingletonManager<UIManager>
         bool isAffordable = DataManager.Instance.totalGold >= cost;
 
         if (!isAffordable)
+        {
+            return;
+        }
+        if (index == 3 && DataManager.Instance.upgradeLevels[index] == 100)
         {
             return;
         }

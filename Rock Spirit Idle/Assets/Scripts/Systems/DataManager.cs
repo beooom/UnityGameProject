@@ -50,14 +50,21 @@ public class DataManager : SingletonManager<DataManager>
         // 각 강화 텍스트를 업데이트
         for (int i = 0; i < upgradeLevels.Count; i++)
         {
-            upgradeTexts[i].text = $"G {(upgradeLevels[i] + 1) * 10}";
-            upgradeLevelTexts[i].text = $"Lv {upgradeLevels[i]}";
+            if (i == 3 && upgradeLevels[i] == 100)
+            {
+                upgradeTexts[i].text = $"Max";
+            }
+            else
+            {
+                upgradeTexts[i].text = $"G {(upgradeLevels[i] + 1) * 10}";
+                upgradeLevelTexts[i].text = $"Lv {upgradeLevels[i]}";
+            }
         }
         upgradeCountTexts[0].text = $"{player.power}";
         upgradeCountTexts[1].text = $"{player.maxHp}";
         upgradeCountTexts[2].text = $"{player.restoreHp}";
         upgradeCountTexts[3].text = $"{player.criticalRate}%";
-        upgradeCountTexts[4].text = $"{100f + (player.criticalHit * 100f)}%";
+        upgradeCountTexts[4].text = $"{player.criticalHit * 100f}%";
         upgradeCountTexts[5].text = $"{player.attackSpeedIncrease}";
         upgradeCountTexts[6].text = $"{player.doubleShot}%";
     }
@@ -69,7 +76,7 @@ public class DataManager : SingletonManager<DataManager>
             case 1: player.maxHp = upgradeLevels[upgradeIndex] * 5f; player.hp += 5f; break;
             case 2: player.restoreHp = upgradeLevels[upgradeIndex] * 0.6f; break;
             case 3: player.criticalRate = upgradeLevels[upgradeIndex] * 1f; break;
-            case 4: player.criticalHit = upgradeLevels[upgradeIndex] * 0.1f; break;
+            case 4: player.criticalHit = 1f + upgradeLevels[upgradeIndex] * 0.01f; break;
             case 5: player.attackSpeedIncrease = upgradeLevels[upgradeIndex] * 0.1f; break;
             case 6: player.doubleShot = upgradeLevels[upgradeIndex] * 1f; break;
         }

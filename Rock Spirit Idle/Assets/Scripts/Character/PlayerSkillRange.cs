@@ -22,13 +22,11 @@ public class PlayerSkillRange : MonoBehaviour
     {
         if (collision.CompareTag("Enemy"))
         {
-            //print("공격가능함.....");
             canUseSkill = true;
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-        //print("공격끝");
         canUseSkill = false;
     }
 }

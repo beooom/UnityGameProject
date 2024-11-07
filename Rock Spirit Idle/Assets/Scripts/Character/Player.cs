@@ -46,7 +46,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         targetEnemy = FindClosestEnemy();
-        if (targetEnemy != null)
+        if (targetEnemy != null && GameManager.Instance.range.canUseSkill)
         {
             anim.SetBool("isMoving", false);
             if (GameManager.Instance.range.canUseSkill && !basicAttack.isCooldown)
@@ -54,7 +54,7 @@ public class Player : MonoBehaviour
                 basicAttack.TriggerSkill(targetEnemy);
             }
         }
-        else
+        else if (targetEnemy == null)
         {
             anim.SetBool("isMoving", true);
         }
@@ -116,7 +116,7 @@ public class Player : MonoBehaviour
         // 2초 대기 후 게임 재시작 (이 때 실시간 기준으로 대기)
         GameManager.Instance.currentState = GameState.GameOver;
         Time.timeScale = 0f;
-        yield return new WaitForSecondsRealtime(0.5f);
+        yield return new WaitForSecondsRealtime(0.1f);
 
         GameManager.Instance.Restart();
         GameManager.Instance.player.hp = GameManager.Instance.player.maxHp;

@@ -12,11 +12,10 @@ public class Enemy : MonoBehaviour
     private Rigidbody2D rb;
     private Collider2D coll;
 
-    //public float StopPoint = 3f;
     public float hp = 1;
     public float maxHp;
     public float power = 1;
-    public float attackSpeed = 1f;
+    public float attackSpeed = 0.7f;
     bool isDead = false;
     private Coroutine MoveCo;
     public float hpAmount { get { return hp / maxHp; } }
@@ -31,10 +30,9 @@ public class Enemy : MonoBehaviour
     }
     private IEnumerator Start()
     {
-        GameManager.Instance.enemies.Add(this); //적 리스트에 자기 자신을 Add
-        
+        GameManager.Instance.enemies.Add(this);
 
-        yield return null;//한프레임 쉬자.
+        yield return null;
 
         target = GameManager.Instance.player.transform;
         MoveCo = StartCoroutine(Move());
@@ -99,8 +97,6 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(float damage)
     {
         hp -= damage;
-        //print($"{damage} 아야!");
-        //print($"내 공격력임. {GameManager.Instance.player.power}");
     }
 
     public void Die()

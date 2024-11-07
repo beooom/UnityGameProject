@@ -25,8 +25,7 @@ public class BasicProjectile : MonoBehaviour
     {
         if (target == null)
         {
-            Destroy(gameObject); // 타겟이 없으면 투사체 제거
-            yield break;
+            Destroy(gameObject);
         }
 
         float duration = flightSpeed;
@@ -44,7 +43,6 @@ public class BasicProjectile : MonoBehaviour
             transform.position = Vector2.Lerp(start, end, linearT) + new Vector2(0.0f, height);
             yield return null;
         }
-
 
         Destroy(gameObject);
     }

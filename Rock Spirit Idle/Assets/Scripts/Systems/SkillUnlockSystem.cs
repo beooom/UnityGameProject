@@ -95,7 +95,7 @@ public class SkillUnlockSystem : SingletonManager<SkillUnlockSystem>
             unlockButton.gameObject.SetActive(false);
             cancelButton.gameObject.SetActive(false);
             closeButton.gameObject.SetActive(true); // 해금 후 닫기 버튼 활성화
-            skillDescriptionText.text = $"{currentSkillData.skillType} 스킬이 해금되었습니다!";
+            skillDescriptionText.text = $"\n\n\n\n{currentSkillData.skillType} 스킬이 해금되었습니다!";
 
             // 해금 상태를 DataManager를 통해 저장
             DataManager.Instance.SaveSkillData(currentSkillData);

@@ -8,8 +8,6 @@ public class StarLightSkill : SkillBase
 {
     public GameObject starlightPrefab; // 스타라이트 투사체 프리팹
     public int maxStarlights = 10; // 최대 스타라이트 수
-    public float spawnHeight = 1f; // 플레이어 위 1f 위치
-    public float spawnRange = 0.3f; // 범위 내에서 랜덤 소환
     public float fireInterval = 0.5f; // 투사체 발사 간격
     public float projectileSpeed = 5f; // 투사체 속도
     public float upwardDistance = 2f; // 초기 상승 거리
@@ -69,6 +67,7 @@ public class StarLightSkill : SkillBase
 
     private IEnumerator MoveProjectile(GameObject starlight, Vector2 targetPosition)
     {
+        StarLightProjectile projectileScript = starlight.gameObject.GetComponent<StarLightProjectile>();
         while (starlight != null && (Vector2)starlight.transform.position != targetPosition)
         {
             starlight.transform.position = Vector2.MoveTowards(starlight.transform.position, targetPosition, projectileSpeed * Time.deltaTime);
@@ -77,9 +76,8 @@ public class StarLightSkill : SkillBase
 
         if (starlight != null)
         {
-            yield return new WaitForSeconds(0.3f);
             GameManager.Instance.starlightProjectiles.Remove(starlight);
-            Destroy(starlight);
+            StartCoroutine(projectileScript.destroy(starlight));
         }
     }
 }

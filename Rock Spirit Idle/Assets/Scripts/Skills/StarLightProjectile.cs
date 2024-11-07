@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class StarLightProjectile : MonoBehaviour
 {
-    public float damageMultiplier = 1.5f; // 플레이어 공격력의 500% 데미지
+    public float damageMultiplier = 1.5f;
     private bool isUsed = false; // 첫 충돌 이후 추가 충돌을 방지하기 위한 변수
 
     private Collider2D coll;
@@ -29,17 +29,15 @@ public class StarLightProjectile : MonoBehaviour
             }
             enemy.TakeDamage(damage);
             GameManager.Instance.RemoveProjectile(gameObject);
-            StartCoroutine(destroy());
-            //Destroy(gameObject);
+            StartCoroutine(destroy(gameObject));
         }
     }
-    private IEnumerator destroy()
+    public IEnumerator destroy(GameObject star)
     {
-        coll.enabled = false; // 충돌 비활성화
-        anim.gameObject.SetActive(true); // 애니메이션 활성화
+        coll.enabled = false;
+        anim.gameObject.SetActive(true); 
+        yield return new WaitForSeconds(0.3f); // 애니메이션 대기 시간
 
-        yield return new WaitForSeconds(0.8f); // 애니메이션 대기 시간
-
-        Destroy(gameObject); // 애니메이션 종료 후 객체 파괴
+        Destroy(star);
     }
 }

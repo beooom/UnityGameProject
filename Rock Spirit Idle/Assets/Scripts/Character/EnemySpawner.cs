@@ -11,14 +11,11 @@ public class EnemySpawner : MonoBehaviour
     public int monsterCount = 10;
     public int monsterLevel = 0;
     public float spawnInterval = 5f; //생성 간격
-    public Vector2 spawnAreaX; // x축 생성 범위
     public Vector2 spawnAreaY = new Vector2(0.4f, 0.7f); // y축 생성 범위
 
     private void Awake()
     {
         GameManager.Instance.spawner = this;
-        spawnAreaX = new Vector2(Camera.main.ViewportToWorldPoint(new Vector3(1.1f, 0, 0)).x,
-    Camera.main.ViewportToWorldPoint(new Vector3(1.6f, 0, 0)).x);
     }
     private void Start()
     {
@@ -39,15 +36,17 @@ public class EnemySpawner : MonoBehaviour
     }
     private void Spawn()
     {
+        float spawnPointX = Camera.main.ViewportToWorldPoint(new Vector3(1.1f, 0, 0)).x + 0.5f;
         for (int i = 0; i < monsterCount; i++)
         {
             //몬스터 생성 위치 설정 (x는 화면 오른쪽 밖 무작위, y는 무작위 높이)
-            Vector3 spawnPosition = new Vector3(Random.Range(spawnAreaX.x, spawnAreaX.y),
+            Vector3 spawnPosition = new Vector3(spawnPointX,
                                                 Random.Range(spawnAreaY.x, spawnAreaY.y),
                                                 0);
             mon = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
             mon.GetComponent<Enemy>().hp = 1 + (monsterLevel * 0.1f);
             mon.GetComponent<Enemy>().power = 1 + (monsterLevel * 1f);
+            spawnPointX += 0.5f;
         }
         monsterLevel++;
     }
