@@ -57,7 +57,7 @@ public class DataManager : SingletonManager<DataManager>
         upgradeCountTexts[1].text = $"{player.maxHp}";
         upgradeCountTexts[2].text = $"{player.restoreHp}";
         upgradeCountTexts[3].text = $"{player.criticalRate}%";
-        upgradeCountTexts[4].text = $"{player.criticalHit * 100f}%";
+        upgradeCountTexts[4].text = $"{100f + (player.criticalHit * 100f)}%";
         upgradeCountTexts[5].text = $"{player.attackSpeedIncrease}";
         upgradeCountTexts[6].text = $"{player.doubleShot}%";
     }

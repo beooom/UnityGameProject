@@ -13,7 +13,11 @@ public class VoidProjectile : MonoBehaviour
     public float damageInterval = 0.1f; //데미지 간격
     private float preDamageTime; //이전에 데미지를 준 시간(Time.time)
 
+    private bool isExploding = false;
+
+    public Animator anim;
     private Camera mainCamera;
+    private Collider2D coll;
 
     private void Awake()
     {
@@ -26,16 +30,27 @@ public class VoidProjectile : MonoBehaviour
 
     private void Update()
     {
-        transform.Translate(Vector3.right * voidSpeed * Time.deltaTime);
+        if (!isExploding)
+        {
+            transform.Translate(Vector3.right * voidSpeed * Time.deltaTime);
+        }
         Vector3 viewPos = mainCamera.WorldToViewportPoint(transform.position);
 
-        // 시야 영역을 벗어나면 제거
-        if (viewPos.x > 1 || pierceCount <= 0)
+        // 시야를 벗어났거나 관통 횟수가 0이 되면 폭발 코루틴 시작
+        if ((viewPos.x > 1 || pierceCount <= 0) && !isExploding)
         {
-            Destroy(gameObject);
+            StartCoroutine(ExplodeAndDestroy());
         }
     }
+    private IEnumerator ExplodeAndDestroy()
+    {
+        isExploding = true; // 이동을 멈추기 위해 플래그 설정
+        anim.SetTrigger("Explode"); // 폭발 애니메이션 재생
 
+        yield return new WaitForSeconds(0.5f); // 폭발 애니메이션 재생 시간 대기
+
+        Destroy(gameObject); // 애니메이션 종료 후 객체 파괴
+    }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
@@ -47,9 +62,10 @@ public class VoidProjectile : MonoBehaviour
         {
             float damage = GameManager.Instance.player.GetCurrentPower() * damageMultiplier;
             if (GameManager.Instance.player.CriticalHit())
-                collision.GetComponent<Enemy>().TakeDamage(damage * GameManager.Instance.player.criticalHit);
-            else
-                collision.GetComponent<Enemy>().TakeDamage(damage);
+            {
+                damage *= GameManager.Instance.player.criticalHit;
+            }
+            collision.GetComponent<Enemy>().TakeDamage(damage);
             pierceCount--;
             preDamageTime = Time.time;
         }

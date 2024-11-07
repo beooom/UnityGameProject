@@ -50,17 +50,6 @@ public class SkillUnlockSystem : SingletonManager<SkillUnlockSystem>
                 skillData.skillObject.SetActive(skillData.isUnlocked);
             }
         }
-        //// 각 스킬 버튼에 리스너 등록
-        //foreach (SkillData skillData in skills)
-        //{
-        //    SkillData capturedSkillData = skillData; // 클로저 문제 방지
-        //    skillData.skillButton.onClick.AddListener(() => OnSkillButtonClicked(capturedSkillData));
-        //    skillData.lockImage.gameObject.SetActive(!skillData.isUnlocked); // 초기 잠금 상태 설정
-        //    if (skillData.skillObject != null)
-        //    {
-        //        skillData.skillObject.SetActive(skillData.isUnlocked);
-        //    }
-        //}
 
         // 설명 창과 닫기 버튼 초기화
         descriptionPanel.SetActive(false);

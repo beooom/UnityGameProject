@@ -8,11 +8,6 @@ using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
-    public GameObject projectilePrefab;
-
-    private Rigidbody2D rb;
-    private Collider2D coll;
-
     public float power = 0f;
     public float hp = 0f;
     public float maxHp;
@@ -29,29 +24,35 @@ public class Player : MonoBehaviour
     public Image hpBar;
     public Text curHp;
     public Animator anim;
+    public Animator re;
     public bool isMoving;
+    public bool isDeath = false;
 
-    private Enemy targetEnemey;
+    private Enemy targetEnemy;
+    public BasicAttack basicAttack;
 
     private void Awake()
     {
         maxHp = hp;
-        rb = GetComponent<Rigidbody2D>();
-        coll = GetComponent<Collider2D>();
+        GameManager.Instance.player = this;
     }
     private void Start()
     {
-        GameManager.Instance.player = this;
-        StartCoroutine(Fire());
+        re.gameObject.SetActive(false);
         StartCoroutine(Restore());
+        basicAttack = GetComponentInChildren<BasicAttack>();
     }
 
     private void Update()
     {
-        targetEnemey = FindClosestEnemy();
-        if (targetEnemey != null)
+        targetEnemy = FindClosestEnemy();
+        if (targetEnemy != null)
         {
             anim.SetBool("isMoving", false);
+            if (GameManager.Instance.range.canUseSkill && !basicAttack.isCooldown)
+            {
+                basicAttack.TriggerSkill(targetEnemy);
+            }
         }
         else
         {
@@ -59,19 +60,6 @@ public class Player : MonoBehaviour
         }
         hpBar.fillAmount = hpAmount;
         curHp.text = $"{hp}";
-    }
-
-    private IEnumerator Fire()
-    {
-        while (true)
-        {
-            if (targetEnemey != null && GameManager.Instance.range.canUseSkill)
-            {
-                yield return new WaitForSeconds(1 / (attackSpeed + attackSpeedIncrease));
-                GameObject pre = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-            }
-            yield return null;
-        }
     }
 
     private Enemy FindClosestEnemy()
@@ -99,12 +87,7 @@ public class Player : MonoBehaviour
 
     public bool CriticalHit()
     {
-        bool OnCritical = false;
-        if (criticalRate > Random.Range(0, 100))
-        {
-            OnCritical = true;
-        }
-        return OnCritical;
+        return criticalRate > Random.Range(0, 100);
     }
     private IEnumerator Restore()
     {
@@ -124,17 +107,22 @@ public class Player : MonoBehaviour
         hp -= damage;
         if (hp <= 0)
         {
-            Die();
+            StartCoroutine(Die());
         }
     }
 
-    public void Die()
+    public IEnumerator Die()
     {
-        GameManager.Instance.spawner.monsterLevel = 0;
+        // 2초 대기 후 게임 재시작 (이 때 실시간 기준으로 대기)
+        GameManager.Instance.currentState = GameState.GameOver;
+        Time.timeScale = 0f;
+        yield return new WaitForSecondsRealtime(0.5f);
 
-        for (int i = GameManager.Instance.enemies.Count - 1; i >= 0; i--)
-        {
-            GameManager.Instance.enemies[i].Die();
-        }
+        GameManager.Instance.Restart();
+        GameManager.Instance.player.hp = GameManager.Instance.player.maxHp;
+
+        re.gameObject.SetActive(true);
+        yield return new WaitForSeconds(1.5f);
+        re.gameObject.SetActive(false);
     }
 }
